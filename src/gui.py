@@ -12,7 +12,7 @@
         self.selected_disk = None
         self.origin_stack = None
         self.draw_game()
-        
+
     def draw_game(self):
         """Draw the stacks and disks on the canvas."""
         self.canvas.delete("all")
@@ -44,3 +44,29 @@
         """Return a color for the disk based on its size."""
         colors = ["red", "green", "blue", "yellow", "orange", "purple", "pink", "cyan"]
         return colors[(disk - 1) % len(colors)]
+    def is_valid_move(self, origin_idx, dest_idx):
+        """Check if moving the top disk from origin stack to destination stack is valid."""
+        if origin_idx == dest_idx:
+            return False
+        origin_stack = self.stacks[origin_idx]
+        dest_stack = self.stacks[dest_idx]
+        if origin_stack.get_size() == 0:
+            return False
+        moving_disk = origin_stack.get_all_items()[-1]
+        if dest_stack.get_size() == 0:
+            return True
+        dest_top_disk = dest_stack.get_all_items()[-1]
+        return moving_disk < dest_top_disk
+
+    def move_disk(self, origin_idx, dest_idx):
+        """Move the top disk from origin stack to destination stack and update the game."""
+        disk = self.stacks[origin_idx].pop()
+        self.stacks[dest_idx].push(disk)
+        self.num_moves += 1
+        self.draw_game()
+        if self.check_win():
+            messagebox.showinfo("You Won!", f"Completed the game in {self.num_moves} moves!")
+
+    def check_win(self):
+        """Check if the game is won (all disks moved to the right stack)."""
+        return self.stacks[2].get_size() == self.num_disks
