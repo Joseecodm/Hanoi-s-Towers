@@ -70,3 +70,40 @@
     def check_win(self):
         """Check if the game is won (all disks moved to the right stack)."""
         return self.stacks[2].get_size() == self.num_disks
+
+    def start_drag(self, event):
+        """Initiate the dragging of a disk."""
+        x, y = event.x, event.y
+        for stack_idx, stack in enumerate(self.stacks):
+            if stack.get_size() > 0:
+                top_disk = stack.get_all_items()[-1]
+                disk_coords = self.canvas.coords(f"disk_{top_disk}")
+                if disk_coords and (disk_coords[0] <= x <= disk_coords[2] and disk_coords[1] <= y <= disk_coords[3]):
+                    self.selected_disk = top_disk
+                    self.origin_stack = stack_idx
+                    return
+
+    def during_drag(self, event):
+        """Update the position of the disk during dragging."""
+        if self.selected_disk:
+            width = 20 * self.selected_disk
+            new_x1 = event.x - width / 2
+            new_x2 = event.x + width / 2
+            self.canvas.coords(f"disk_{self.selected_disk}", new_x1, event.y - 10, new_x2, event.y + 10)
+
+    def stop_drag(self, event):
+        """Finish dragging the disk and attempt a move."""
+        if not self.selected_disk:
+            return
+        x = event.x
+        for stack_idx in range(3):
+            stack_center = 100 + stack_idx * 200
+            if stack_center - 50 <= x <= stack_center + 50:
+                if self.is_valid_move(self.origin_stack, stack_idx):
+                    self.move_disk(self.origin_stack, stack_idx)
+                else:
+                    self.draw_game()  # Restore position if move is invalid
+                self.selected_disk = None
+                return
+        self.draw_game()
+        self.selected_disk = None
