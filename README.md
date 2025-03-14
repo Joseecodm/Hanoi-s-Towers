@@ -2,19 +2,6 @@
 
 This project is a Python implementation of the classic Tower of Hanoi puzzle using Tkinter for the graphical interface. It allows you to interactively solve the puzzle by dragging and dropping disks between towers.
 
-## Table of Contents
-
-- [Overview](#overview)
-- [Features](#features)
-- [Project Structure](#project-structure)
-- [Requirements](#requirements)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Building an Executable](#building-an-executable)
-- [GitHub Releases](#github-releases)
-- [License](#license)
-- [Contributing](#contributing)
-
 ## Overview
 
 In the Tower of Hanoi puzzle, the objective is to move a stack of disks from one peg to another while following these rules:
@@ -32,7 +19,6 @@ This project provides an interactive GUI to play and solve the puzzle.
 - **Move Counter:** Displays the number of moves made.
 - **Executable Build:** Create a standalone executable using PyInstaller.
 - **GitHub Releases:** Easily distribute the executable without including it in the repository.
-
 
 ## Requirements
 
