@@ -1,3 +1,30 @@
+import tkinter as tk
+from tkinter import messagebox
+from stack_hanoi import Stack
+
+class GUI:
+    def __init__(self, root, num_disks=3):
+        self.root = root
+        self.root.title("Tower of Hanoi")
+
+        self.num_disks = num_disks
+        self.stacks = [Stack("Left"), Stack("Middle"), Stack("Right")]
+        self.selected_disk = None
+        self.origin_stack = None
+        self.num_moves = 0
+
+        self.canvas = tk.Canvas(root, width=600, height=400, bg="white")
+        self.canvas.pack()
+
+        control_frame = tk.Frame(root)
+        control_frame.pack()
+        tk.Label(control_frame, text="Number of Disks:").pack(side=tk.LEFT)
+        self.difficulty = tk.IntVar(value=self.num_disks)
+        tk.OptionMenu(control_frame, self.difficulty, *range(3, 9), command=self.set_difficulty).pack(side=tk.LEFT)
+        tk.Button(control_frame, text="Reset", command=self.reset_game).pack(side=tk.LEFT)
+
+        self.reset_game()
+
     def set_difficulty(self, _):
         """Adjust the number of disks and reset the game."""
         self.num_disks = self.difficulty.get()
@@ -20,7 +47,7 @@
         for i in range(3):
             x = 100 + i * 200
             self.canvas.create_rectangle(x - 5, 150, x + 5, 350, fill="black")
-        # Draw disks
+        # Draw disks in each stack
         for stack_index, stack in enumerate(self.stacks):
             x = 100 + stack_index * 200
             y = 350
@@ -44,6 +71,7 @@
         """Return a color for the disk based on its size."""
         colors = ["red", "green", "blue", "yellow", "orange", "purple", "pink", "cyan"]
         return colors[(disk - 1) % len(colors)]
+
     def is_valid_move(self, origin_idx, dest_idx):
         """Check if moving the top disk from origin stack to destination stack is valid."""
         if origin_idx == dest_idx:
@@ -112,4 +140,3 @@ if __name__ == '__main__':
     root = tk.Tk()
     app = GUI(root)
     root.mainloop()
-
