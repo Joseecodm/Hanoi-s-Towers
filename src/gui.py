@@ -6,6 +6,8 @@ class GUI:
     def __init__(self, root, num_disks=3):
         self.root = root
         self.root.title("Tower of Hanoi")
+        self.root.geometry("600x400")
+        self.root.resizable(False, False)
 
         self.num_disks = num_disks
         self.stacks = [Stack("Left"), Stack("Middle"), Stack("Right")]
@@ -136,7 +138,3 @@ class GUI:
         self.draw_game()
         self.selected_disk = None
 
-if __name__ == '__main__':
-    root = tk.Tk()
-    app = GUI(root)
-    root.mainloop()
