@@ -5,16 +5,20 @@ from gui import GUI
 
 class RoundedButton(tk.Canvas):
     def __init__(self, parent, text, command=None, width=150, height=50, radius=25, bg_color="#ADD8E6", text_color="black"):
-        super().__init__(parent, width=width, height=height, bg=parent["bg"], highlightthickness=0)
+        super().__init__(parent, width=width, height=height, bg=parent["bg"], highlightthickness=0, cursor="hand2")  # ⬅ Cursor de manita
+        
         self.command = command
         self.radius = radius
         self.bg_color = bg_color
 
         self.create_rounded_rectangle(0, 0, width, height, radius, fill=bg_color, outline=bg_color)
-        self.text_id = self.create_text(width//2, height//2, text=text, fill=text_color, font=("Arial", 14, "bold"))
+        self.text_id = self.create_text(width//2, height//2, text=text, fill=text_color, font=("Arial", 12, "normal"))
 
         self.bind("<Button-1>", self.on_click)
         self.tag_bind(self.text_id, "<Button-1>", self.on_click)
+
+        self.bind("<Enter>", self.on_hover)
+        self.bind("<Leave>", self.on_leave)
 
     def create_rounded_rectangle(self, x1, y1, x2, y2, radius, **kwargs):
         self.create_arc(x1, y1, x1 + radius * 2, y1 + radius * 2, start=90, extent=90, **kwargs)
@@ -28,6 +32,13 @@ class RoundedButton(tk.Canvas):
         if self.command:
             self.command()
 
+    def on_hover(self, event):
+        """Cambia el cursor a una manita cuando pasa sobre el botón."""
+        self.config(cursor="hand2")
+
+    def on_leave(self, event):
+        """Restaura el cursor cuando sale del botón."""
+        self.config(cursor="")
 class MainMenu(tk.Frame):
     def __init__(self, master, start_game_callback, exit_callback, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
@@ -45,7 +56,7 @@ class MainMenu(tk.Frame):
         tk.Label(title_frame, text="a", font=("Arial", 35, "bold"), fg="#D1B3FF", bg="#F0F0F0").pack(side=tk.LEFT)
         tk.Label(title_frame, text="n", font=("Arial", 35, "bold"), fg="#A7C7E7", bg="#F0F0F0").pack(side=tk.LEFT)
         tk.Label(title_frame, text="o", font=("Arial", 35, "bold"), fg="#A8E6CF", bg="#F0F0F0").pack(side=tk.LEFT)
-        tk.Label(title_frame, text="i", font=("Arial", 35, "bold"), fg="#FCEEB5", bg="#F0F0F0").pack(side=tk.LEFT)
+        tk.Label(title_frame, text="i", font=("Arial", 35, "bold"), fg="#fff333", bg="#F0F0F0").pack(side=tk.LEFT)
         tk.Label(title_frame, text="'s", font=("Arial", 35, "bold"), fg="#FFABAB", bg="#F0F0F0").pack(side=tk.LEFT)
 
         tk.Label(title_frame, text=" ", font=("Arial", 35, "bold"), bg="#F0F0F0").pack(side=tk.LEFT)
@@ -54,7 +65,7 @@ class MainMenu(tk.Frame):
         tk.Label(title_frame, text="o", font=("Arial", 35, "bold"), fg="#FFB3E6", bg="#F0F0F0").pack(side=tk.LEFT)
         tk.Label(title_frame, text="w", font=("Arial", 35, "bold"), fg="#D1B3FF", bg="#F0F0F0").pack(side=tk.LEFT)
         tk.Label(title_frame, text="e", font=("Arial", 35, "bold"), fg="#A7C7E7", bg="#F0F0F0").pack(side=tk.LEFT)
-        tk.Label(title_frame, text="r", font=("Arial", 35, "bold"), fg="#FCEEB5", bg="#F0F0F0").pack(side=tk.LEFT)
+        tk.Label(title_frame, text="r", font=("Arial", 35, "bold"), fg="#fff333", bg="#F0F0F0").pack(side=tk.LEFT)
         tk.Label(title_frame, text="s", font=("Arial", 35, "bold"), fg="#FFABAB", bg="#F0F0F0").pack(side=tk.LEFT)
 
         self.new_game_button = RoundedButton(container, text="New Game", command=self.start_game_callback, bg_color="#F0F0F0")
