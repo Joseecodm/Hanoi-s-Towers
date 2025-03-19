@@ -2,6 +2,7 @@ import tkinter as tk
 import os
 from tkinter import messagebox
 from gui import GUI
+from settings import SettingsWindow
 
 class RoundedButton(tk.Canvas):
     def __init__(self, parent, text, command=None, width=150, height=50, radius=25, bg_color="#ADD8E6", text_color="black"):
@@ -39,11 +40,16 @@ class RoundedButton(tk.Canvas):
     def on_leave(self, event):
         """Restaura el cursor cuando sale del botón."""
         self.config(cursor="")
+import tkinter as tk
+from tkinter import messagebox
+from settings import SettingsWindow
+
 class MainMenu(tk.Frame):
     def __init__(self, master, start_game_callback, exit_callback, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
         self.start_game_callback = start_game_callback
         self.exit_callback = exit_callback
+        self.num_disks = 3  # Número de discos por defecto
         self.pack(expand=True, fill='both')
 
         container = tk.Frame(self, bg="#F0F0F0")
@@ -68,13 +74,16 @@ class MainMenu(tk.Frame):
         tk.Label(title_frame, text="r", font=("Arial", 35, "bold"), fg="#fff333", bg="#F0F0F0").pack(side=tk.LEFT)
         tk.Label(title_frame, text="s", font=("Arial", 35, "bold"), fg="#FFABAB", bg="#F0F0F0").pack(side=tk.LEFT)
 
-        self.new_game_button = RoundedButton(container, text="New Game", command=self.start_game_callback, bg_color="#F0F0F0")
+        self.new_game_button = RoundedButton(container, 
+                                             text="New Game", 
+                                             command=lambda: self.start_game_callback(self.num_disks), 
+                                             bg_color="#F0F0F0")
         self.new_game_button.pack(pady=15)
 
         buttons_frame = tk.Frame(container, bg="#F0F0F0")
         buttons_frame.pack(pady=10)
 
-        self.settings_button = RoundedButton(buttons_frame, text="Settings", command=self.show_settings, bg_color="#F0F0F0")
+        self.settings_button = RoundedButton(buttons_frame, text="Settings", command=self.open_settings, bg_color="#F0F0F0")
         self.settings_button.pack(side=tk.LEFT, padx=10)
 
         self.tutorial_button = RoundedButton(buttons_frame, text="Tutorial", command=self.show_tutorial, bg_color="#F0F0F0")
@@ -83,12 +92,22 @@ class MainMenu(tk.Frame):
         self.exit_button = RoundedButton(buttons_frame, text="Exit", command=self.exit_callback, bg_color="#FF6961")
         self.exit_button.pack(side=tk.LEFT, padx=10)
 
-    def show_settings(self):
-        messagebox.showinfo("Settings", "")
+    def open_settings(self):
+        """Abre la ventana de configuración para cambiar el número de discos."""
+        SettingsWindow(self, self.update_disks, self.num_disks)
+
+    def update_disks(self, new_value):
+        """Actualiza el número de discos basado en la configuración."""
+        self.num_disks = new_value
 
     def show_tutorial(self):
         tutorial_text = (
             "Tutorial:\n\n"
+            "El objetivo del juego es mover todos los discos de la torre izquierda a la torre derecha, siguiendo estas reglas:\n"
+            "1. Solo puedes mover un disco a la vez.\n"
+            "2. No puedes colocar un disco más grande sobre uno más pequeño.\n"
+            "3. Usa las tres torres estratégicamente para resolver el juego en la menor cantidad de movimientos.\n\n"
+            "¡Buena suerte!"
         )
         messagebox.showinfo("Tutorial", tutorial_text)
 
@@ -96,23 +115,28 @@ class App:
     def __init__(self, root):
         self.root = root
         self.root.title("Hanoi Towers")
-        
+
         width, height = 600, 400
         self.root.geometry(f"{width}x{height}")
-
         self.center_window(width, height)
 
+        # Número de discos por defecto
+        self.num_disks = 3
+
+        # Crear el menú principal y pasarle la referencia a start_game
         self.main_menu = MainMenu(root, self.start_game, self.exit_game)
 
-    def start_game(self):
+    def start_game(self, num_disks=None):
+        """Se llama al pulsar 'New Game'. Destruye el menú y crea el juego con el número de discos seleccionado."""
+        if num_disks is not None:
+            self.num_disks = num_disks  # Actualizar el número de discos
         self.main_menu.destroy()
+        self.game_gui = GUI(self.root, num_disks=self.num_disks)  # Pasar el número de discos
 
-
-        self.game_gui = GUI(self.root, num_disks=3)
-    
     def exit_game(self):
+        """Cerrar la aplicación."""
         self.root.quit()
-
+    
     def center_window(self, width, height):
         screen_width = self.root.winfo_screenwidth()
         screen_height = self.root.winfo_screenheight()
