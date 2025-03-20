@@ -12,13 +12,13 @@ class RoundedButton(tk.Canvas):
         self.create_rounded_rectangle(0, 0, width, height, radius, fill=bg_color, outline=bg_color)
         self.text_id = self.create_text(width // 2, height // 2, text=text, fill=text_color, font=("Arial", 12, "normal"))
 
-        self.bind("<Button-1>", self.on_click)
-        self.tag_bind(self.text_id, "<Button-1>", self.on_click)
+        # Bind the command to the ButtonRelease event to avoid duplicate triggers.
+        self.bind("<ButtonRelease-1>", self.on_click)
         self.bind("<Enter>", self.on_hover)
         self.bind("<Leave>", self.on_leave)
 
     def create_rounded_rectangle(self, x1, y1, x2, y2, radius, **kwargs):
-        # Draws rounded corners using arcs and rectangles
+        # Draws rounded corners using arcs and rectangles.
         self.create_arc(x1, y1, x1 + radius * 2, y1 + radius * 2, start=90, extent=90, **kwargs)
         self.create_arc(x2 - radius * 2, y1, x2, y1 + radius * 2, start=0, extent=90, **kwargs)
         self.create_arc(x1, y2 - radius * 2, x1 + radius * 2, y2, start=180, extent=90, **kwargs)
@@ -29,6 +29,8 @@ class RoundedButton(tk.Canvas):
     def on_click(self, event=None):
         if self.command:
             self.command()
+        # Returning "break" stops further event propagation.
+        return "break"
 
     def on_hover(self, event):
         self.config(cursor="hand2")
@@ -74,11 +76,11 @@ class SettingsWindow(tk.Toplevel):
         try:
             value = int(self.disk_selector.get())
         except ValueError:
-            messagebox.showerror("Error", "Please enter a valid number.")
+            messagebox.showerror("Error", "Please enter a valid number.", parent=self)
             return
         
         if value < 3 or value > 8:
-            messagebox.showerror("Error", "Only numbers from 3 to 8 are allowed.")
+            messagebox.showerror("Error", "Only numbers from 3 to 8 are allowed.", parent=self)
             return
         
         self.apply_callback(value)
