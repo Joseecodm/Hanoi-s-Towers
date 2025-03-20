@@ -72,6 +72,7 @@ class SettingsWindow(tk.Toplevel):
         rounded_btn.pack(pady=20)
 
     def apply_settings(self):
+        
         """Validates and applies the settings, or shows an error message if validation fails."""
         try:
             value = int(self.disk_selector.get())
